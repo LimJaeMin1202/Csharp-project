@@ -270,7 +270,7 @@ namespace StudyPlanner
                                 .ToList();
 
                 dgReview.ItemsSource = dueList;
-                txtReviewCount.Text = $"오늘 복습할 항목 ({dueList.Count}개)";
+                txtReviewCount.Text = dueList.Count.ToString();
 
                 emptyReview.Visibility = dueList.Count == 0
                     ? Visibility.Visible : Visibility.Collapsed;

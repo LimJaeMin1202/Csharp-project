@@ -17,6 +17,41 @@
         TextOptions.TextRenderingMode="Auto"
         KeyDown="Window_KeyDown">
 
+    <Window.Resources>
+        <!-- 클릭 가능한 카드: 마우스 호버 시 그림자 ↑ + 손가락 커서 + 살짝 떠오름 -->
+        <Style x:Key="HoverCardStyle" TargetType="materialDesign:Card"
+               BasedOn="{StaticResource {x:Type materialDesign:Card}}">
+            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp12"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.02" ScaleY="1.02"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- DataGrid 행 호버 시 살짝 강조 (MaterialDesign 기본 + 살짝 boost) -->
+        <Style x:Key="HoverableRowStyle" TargetType="DataGridRow"
+               BasedOn="{StaticResource MaterialDesignDataGridRow}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E8EAF6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <TabControl x:Name="tabMain" Margin="10">
 
         <!-- ============ 탭 0: 대시보드 ============ -->
@@ -44,8 +79,9 @@
                     </Grid.ColumnDefinitions>
 
                     <materialDesign:Card Grid.Column="0" Background="#3F51B5" UniformCornerRadius="8"
+                                         Style="{StaticResource HoverCardStyle}"
                                          Padding="18" Margin="0,0,6,0"
-                                         Cursor="Hand" ToolTip="등록된 학습 주제 총 개수 (클릭 → 학습 주제 탭)"
+                                         ToolTip="등록된 학습 주제 총 개수 (클릭 → 학습 주제 탭)"
                                          MouseLeftButtonUp="CardLearnTopics_Click">
                         <StackPanel>
                             <TextBlock Text="학습 주제" Foreground="White" FontSize="13" Opacity="0.85"/>
@@ -59,8 +95,9 @@
                     </materialDesign:Card>
 
                     <materialDesign:Card Grid.Column="1" Background="#E91E63" UniformCornerRadius="8"
+                                         Style="{StaticResource HoverCardStyle}"
                                          Padding="18" Margin="3,0,3,0"
-                                         Cursor="Hand" ToolTip="오늘 복습할 항목 수 (클릭 → 오늘의 복습 탭)"
+                                         ToolTip="오늘 복습할 항목 수 (클릭 → 오늘의 복습 탭)"
                                          MouseLeftButtonUp="CardTodayReview_Click">
                         <StackPanel>
                             <TextBlock Text="오늘 복습" Foreground="White" FontSize="13" Opacity="0.85"/>
@@ -74,8 +111,9 @@
                     </materialDesign:Card>
 
                     <materialDesign:Card Grid.Column="2" Background="#009688" UniformCornerRadius="8"
+                                         Style="{StaticResource HoverCardStyle}"
                                          Padding="18" Margin="3,0,3,0"
-                                         Cursor="Hand" ToolTip="가장 가까운 시험까지 남은 일수 (클릭 → 시험 D-Day 탭)"
+                                         ToolTip="가장 가까운 시험까지 남은 일수 (클릭 → 시험 D-Day 탭)"
                                          MouseLeftButtonUp="CardNextExam_Click">
                         <StackPanel>
                             <TextBlock Text="다가오는 시험" Foreground="White" FontSize="13" Opacity="0.85"/>
@@ -91,8 +129,9 @@
                     </materialDesign:Card>
 
                     <materialDesign:Card Grid.Column="3" Background="#FF6F00" UniformCornerRadius="8"
+                                         Style="{StaticResource HoverCardStyle}"
                                          Padding="18" Margin="6,0,0,0"
-                                         Cursor="Hand" ToolTip="오늘부터 거꾸로 매일 학습한 일수 (클릭 → 통계 탭)"
+                                         ToolTip="오늘부터 거꾸로 매일 학습한 일수 (클릭 → 통계 탭)"
                                          MouseLeftButtonUp="CardStreak_Click">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
@@ -335,8 +374,15 @@
 
                 <!-- 왼쪽: 오늘 복습할 항목 목록 -->
                 <DockPanel Grid.Column="0" Margin="0,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" x:Name="txtReviewCount"
-                               Text="오늘 복습할 항목" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="오늘 복습할 항목" FontSize="18" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <Border Background="#E91E63" CornerRadius="10" Padding="9,2"
+                                Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="txtReviewCount" Text="0"
+                                       Foreground="White" FontWeight="Bold" FontSize="13"/>
+                        </Border>
+                    </StackPanel>
                     <Grid>
                     <DataGrid x:Name="dgReview"
                               Style="{StaticResource MaterialDesignDataGrid}"
@@ -585,10 +631,19 @@
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock x:Name="txtPomodoroMode" Text="집중 시간"
                                    FontSize="18" Foreground="#5C6BC0" FontWeight="Bold"
-                                   HorizontalAlignment="Center" Margin="0,0,0,12"/>
-                        <TextBlock x:Name="txtPomodoroTime" Text="25:00"
-                                   FontSize="96" FontWeight="Light"
-                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                   HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+                        <!-- 원형 타이머 디스플레이 -->
+                        <Grid Width="290" Height="290" HorizontalAlignment="Center" Margin="0,0,0,20">
+                            <Ellipse Fill="#F5F7FF" Stroke="#3F51B5" StrokeThickness="3"/>
+                            <Ellipse Width="280" Height="280" Stroke="#C5CAE9" StrokeThickness="1"
+                                     Opacity="0.6"/>
+                            <TextBlock x:Name="txtPomodoroTime" Text="25:00"
+                                       FontSize="84" FontWeight="Light"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="#1A237E"/>
+                        </Grid>
+
                         <TextBlock x:Name="txtPomodoroStatus" Text="시작 버튼을 눌러 집중을 시작하세요"
                                    FontSize="13" Foreground="#888"
                                    HorizontalAlignment="Center" Margin="0,0,0,30"/>
@@ -758,13 +813,20 @@
                                                 <Setter Property="Background" Value="#FAFAFA"/>
                                                 <Setter Property="Opacity" Value="0.5"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
-                                                <Setter Property="Background" Value="#FFF8E1"/>
-                                                <Setter Property="BorderBrush" Value="#FFA726"/>
-                                                <Setter Property="BorderThickness" Value="2"/>
-                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding HasExam}" Value="True">
                                                 <Setter Property="Background" Value="#FFEBEE"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                <Setter Property="Background">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#FFF3E0" Offset="0"/>
+                                                            <GradientStop Color="#FFE0B2" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="BorderBrush" Value="#FB8C00"/>
+                                                <Setter Property="BorderThickness" Value="0,0,0,3"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
