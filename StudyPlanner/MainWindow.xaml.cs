@@ -20,6 +20,8 @@ using ModifierKeys = System.Windows.Input.ModifierKeys;
 using Keyboard = System.Windows.Input.Keyboard;
 using TextBox = System.Windows.Controls.TextBox;
 using MouseButtonEventArgs = System.Windows.Input.MouseButtonEventArgs;
+using Brush = System.Windows.Media.Brush;
+using BrushConverter = System.Windows.Media.BrushConverter;
 
 namespace StudyPlanner
 {
@@ -40,6 +42,16 @@ namespace StudyPlanner
         // 검색 입력 debounce 타이머 (타이핑 멈춘 후 250ms 뒤 필터 적용)
         private DispatcherTimer? topicSearchDebounce;
         private DispatcherTimer? examSearchDebounce;
+
+        // 포모도로 타이머 상태
+        private DispatcherTimer? pomodoroTimer;
+        private int pomodoroRemainingSeconds = 25 * 60;
+        private int pomodoroSelectedMinutes = 25;
+        private string pomodoroMode = "집중";   // "집중" / "짧은 휴식" / "긴 휴식"
+        private bool pomodoroRunning = false;
+
+        // 캘린더가 현재 보고 있는 달의 1일
+        private DateTime calendarViewMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
         // 학습 주제 / 시험 캐시 (DB에서 한 번 읽고 필터링은 메모리 상에서 수행)
         private List<StudyTopic> allTopics = new();
@@ -74,6 +86,9 @@ namespace StudyPlanner
             LoadExams();         // 시험 목록 불러오기
             LoadDashboard();     // 대시보드 통계/차트 갱신
             LoadStatistics();    // 상세 통계 탭 갱신
+            LoadPomodoroStats(); // 포모도로 누적 통계 표시
+            PomodoroReset();     // 타이머 초기 상태 표시
+            BuildCalendar();     // 월간 캘린더 초기 렌더링
 
             // 트레이 아이콘 등록 (앱 실행 중 작업표시줄 트레이에 표시됨)
             trayService = new TrayNotificationService(onOpenRequested: () =>
@@ -306,6 +321,7 @@ namespace StudyPlanner
             LoadReviewList();
             LoadDashboard();
             LoadStatistics();
+            BuildCalendar();
         }
 
         // 오늘의 복습 목록에서 항목을 선택했을 때
@@ -360,6 +376,7 @@ namespace StudyPlanner
             LoadReviewList();
             LoadDashboard();
             LoadStatistics();
+            BuildCalendar();
         }
 
         // ===================== 시험 D-Day =====================
@@ -477,6 +494,7 @@ namespace StudyPlanner
             LoadExams();
             LoadDashboard();
             LoadStatistics();
+            BuildCalendar();
         }
 
         // [시험 대비 복습 일정 생성] 버튼 클릭 — D-Day 역산
@@ -578,14 +596,24 @@ namespace StudyPlanner
 
                 chartSubject.LegendPosition = LegendPosition.Hidden;
                 chartSubject.TooltipPosition = TooltipPosition.Top;
-                chartSubject.Series = new ISeries[]
+
+                // 과목별로 별도 ColumnSeries 생성 → 각 막대를 그 과목의 색으로
+                // (각 시리즈의 Values는 null로 채워진 자기 위치에만 값을 둠)
+                var subjectSeries = new List<ISeries>();
+                for (int i = 0; i < bySubject.Count; i++)
                 {
-                    new ColumnSeries<int>
+                    var grp = bySubject[i];
+                    var values = new double?[bySubject.Count];
+                    values[i] = grp.Count;
+                    subjectSeries.Add(new ColumnSeries<double?>
                     {
-                        Values = bySubject.Select(x => x.Count).ToArray(),
-                        Fill = new SolidColorPaint(new SKColor(63, 81, 181))  // 앱 메인 색
-                    }
-                };
+                        Values = values,
+                        Name = grp.Subject,
+                        Fill = new SolidColorPaint(SubjectColorService.GetSkColor(grp.Subject))
+                    });
+                }
+                chartSubject.Series = subjectSeries.ToArray();
+
                 chartSubject.XAxes = new[]
                 {
                     new Axis
@@ -998,11 +1026,13 @@ namespace StudyPlanner
             {
                 switch (e.Key)
                 {
-                    case Key.D1: tabMain.SelectedIndex = 0; e.Handled = true; return;
-                    case Key.D2: tabMain.SelectedIndex = 1; e.Handled = true; return;
-                    case Key.D3: tabMain.SelectedIndex = 2; e.Handled = true; return;
-                    case Key.D4: tabMain.SelectedIndex = 3; e.Handled = true; return;
-                    case Key.D5: tabMain.SelectedIndex = 4; e.Handled = true; return;
+                    case Key.D1: tabMain.SelectedIndex = 0; e.Handled = true; return;  // 대시보드
+                    case Key.D2: tabMain.SelectedIndex = 1; e.Handled = true; return;  // 학습 주제
+                    case Key.D3: tabMain.SelectedIndex = 2; e.Handled = true; return;  // 오늘의 복습
+                    case Key.D4: tabMain.SelectedIndex = 3; e.Handled = true; return;  // 시험 D-Day
+                    case Key.D5: tabMain.SelectedIndex = 4; e.Handled = true; return;  // 포모도로
+                    case Key.D6: tabMain.SelectedIndex = 5; e.Handled = true; return;  // 캘린더
+                    case Key.D7: tabMain.SelectedIndex = 6; e.Handled = true; return;  // 통계
                     case Key.N:
                         tabMain.SelectedIndex = 1;
                         Dispatcher.BeginInvoke(new Action(() => txtSubject.Focus()));
@@ -1111,6 +1141,190 @@ namespace StudyPlanner
         private void CardLearnTopics_Click(object sender, MouseButtonEventArgs e)  => tabMain.SelectedIndex = 1;
         private void CardTodayReview_Click(object sender, MouseButtonEventArgs e)  => tabMain.SelectedIndex = 2;
         private void CardNextExam_Click(object sender, MouseButtonEventArgs e)     => tabMain.SelectedIndex = 3;
-        private void CardStreak_Click(object sender, MouseButtonEventArgs e)       => tabMain.SelectedIndex = 4;
+        private void CardStreak_Click(object sender, MouseButtonEventArgs e)       => tabMain.SelectedIndex = 6;  // 통계 탭
+
+        // ===================== 포모도로 타이머 =====================
+
+        // 모드 선택 (집중 25 / 짧은 휴식 5 / 긴 휴식 15)
+        private void btnPomodoroMode_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            int minutes = int.Parse(btn.Tag.ToString()!);
+            pomodoroSelectedMinutes = minutes;
+            pomodoroMode = minutes == 25 ? "집중"
+                         : minutes == 5  ? "짧은 휴식"
+                         : "긴 휴식";
+            PomodoroReset();
+        }
+
+        // 시작 버튼
+        private void btnPomodoroStart_Click(object sender, RoutedEventArgs e)
+        {
+            if (pomodoroTimer == null)
+            {
+                pomodoroTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                pomodoroTimer.Tick += PomodoroTick;
+            }
+            pomodoroTimer.Start();
+            pomodoroRunning = true;
+            btnPomodoroStart.IsEnabled = false;
+            btnPomodoroPause.IsEnabled = true;
+            txtPomodoroStatus.Text = $"⏳ {pomodoroMode} 진행 중...";
+        }
+
+        // 일시정지
+        private void btnPomodoroPause_Click(object sender, RoutedEventArgs e)
+        {
+            pomodoroTimer?.Stop();
+            pomodoroRunning = false;
+            btnPomodoroStart.IsEnabled = true;
+            btnPomodoroPause.IsEnabled = false;
+            txtPomodoroStatus.Text = "⏸ 일시정지됨";
+        }
+
+        // 리셋 (현재 모드의 분으로 되돌림)
+        private void btnPomodoroReset_Click(object sender, RoutedEventArgs e)
+            => PomodoroReset();
+
+        private void PomodoroReset()
+        {
+            pomodoroTimer?.Stop();
+            pomodoroRunning = false;
+            pomodoroRemainingSeconds = pomodoroSelectedMinutes * 60;
+            btnPomodoroStart.IsEnabled = true;
+            btnPomodoroPause.IsEnabled = false;
+            txtPomodoroMode.Text = $"{pomodoroMode} 시간";
+
+            // 모드별 색상 적용
+            string color = pomodoroMode == "집중" ? "#5C6BC0"
+                         : pomodoroMode == "짧은 휴식" ? "#26A69A"
+                         : "#FFA726";
+            var brush = (Brush)new BrushConverter().ConvertFromString(color)!;
+            txtPomodoroMode.Foreground = brush;
+
+            UpdatePomodoroDisplay();
+            txtPomodoroStatus.Text = "시작 버튼을 눌러 시작하세요";
+        }
+
+        // 매초 호출 — 남은 시간 1초 차감, 0초 되면 세션 완료 처리
+        private void PomodoroTick(object? sender, EventArgs e)
+        {
+            pomodoroRemainingSeconds--;
+            UpdatePomodoroDisplay();
+
+            if (pomodoroRemainingSeconds <= 0)
+            {
+                pomodoroTimer?.Stop();
+                pomodoroRunning = false;
+
+                // 집중 세션만 기록 (휴식은 기록하지 않음)
+                if (pomodoroMode == "집중")
+                {
+                    PomodoroLogService.RecordSession(pomodoroSelectedMinutes);
+                    trayService?.ShowNotification(
+                        "🍅 집중 완료!",
+                        $"{pomodoroSelectedMinutes}분 집중을 완료했습니다. 잠시 휴식하세요.");
+                }
+                else
+                {
+                    trayService?.ShowNotification(
+                        "휴식 종료",
+                        "다시 집중 모드로 돌아가볼까요?");
+                }
+
+                // 시스템 소리
+                try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
+
+                txtPomodoroStatus.Text = "✅ 완료! 시작 버튼으로 다시 진행";
+                btnPomodoroStart.IsEnabled = true;
+                btnPomodoroPause.IsEnabled = false;
+                pomodoroRemainingSeconds = pomodoroSelectedMinutes * 60;
+                UpdatePomodoroDisplay();
+                LoadPomodoroStats();
+            }
+        }
+
+        private void UpdatePomodoroDisplay()
+        {
+            int min = pomodoroRemainingSeconds / 60;
+            int sec = pomodoroRemainingSeconds % 60;
+            txtPomodoroTime.Text = $"{min:D2}:{sec:D2}";
+        }
+
+        // 오늘·이번 주 누적 통계 갱신
+        private void LoadPomodoroStats()
+        {
+            var (todaySessions, todayMinutes) = PomodoroLogService.TodayStats();
+            var (weekSessions, weekMinutes) = PomodoroLogService.ThisWeekStats();
+            txtTodaySessions.Text = todaySessions.ToString();
+            txtTodayMinutes.Text = todayMinutes.ToString();
+            txtWeekSessions.Text = weekSessions.ToString();
+            txtWeekMinutes.Text = weekMinutes.ToString();
+        }
+
+        // ===================== 월간 캘린더 =====================
+
+        // 현재 보고 있는 달의 42칸을 만들어 화면에 표시
+        // - 시작은 월요일 (한국 캘린더 관례)
+        // - 학습일/시험일/복습예정 마커 포함
+        private void BuildCalendar()
+        {
+            if (calendarGrid == null) return;  // XAML 초기화 전 호출 방지
+
+            // 타이틀
+            txtCalendarTitle.Text = $"{calendarViewMonth.Year}년 {calendarViewMonth.Month}월";
+
+            // 그 달의 1일이 무슨 요일인지 → 월요일 시작으로 정렬해서 시작 날짜 계산
+            int firstDow = ((int)calendarViewMonth.DayOfWeek + 6) % 7;  // 월=0, 화=1, ..., 일=6
+            DateTime gridStart = calendarViewMonth.AddDays(-firstDow);
+
+            // DB에서 한 번에 끌어옴
+            List<StudyTopic> topics;
+            List<Exam> exams;
+            using (var db = new StudyDbContext())
+            {
+                topics = db.StudyTopics.ToList();
+                exams = db.Exams.ToList();
+            }
+
+            var today = DateTime.Today;
+            var days = new List<CalendarDay>();
+            for (int i = 0; i < 42; i++)
+            {
+                var d = gridStart.AddDays(i).Date;
+                var dow = (int)d.DayOfWeek;
+                var day = new CalendarDay
+                {
+                    Date = d,
+                    IsCurrentMonth = d.Month == calendarViewMonth.Month,
+                    IsToday = d == today,
+                    IsWeekend = (dow == 0 || dow == 6),  // 일=0, 토=6
+                    StudyCount = topics.Count(t => t.StudyDate.Date == d),
+                    ReviewCount = topics.Count(t => t.NextReviewDate.Date == d),
+                    ExamSubjects = exams.Where(x => x.ExamDate.Date == d).Select(x => x.Subject).ToList()
+                };
+                days.Add(day);
+            }
+
+            calendarGrid.ItemsSource = days;
+        }
+
+        private void btnCalendarPrev_Click(object sender, RoutedEventArgs e)
+        {
+            calendarViewMonth = calendarViewMonth.AddMonths(-1);
+            BuildCalendar();
+        }
+
+        private void btnCalendarNext_Click(object sender, RoutedEventArgs e)
+        {
+            calendarViewMonth = calendarViewMonth.AddMonths(1);
+            BuildCalendar();
+        }
+
+        private void btnCalendarToday_Click(object sender, RoutedEventArgs e)
+        {
+            calendarViewMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            BuildCalendar();
+        }
     }
 }
