@@ -1,0 +1,164 @@
+{
+  "Version": "1.0",
+  "ExportedAt": "2026-05-28T09:00:00",
+  "Topics": [
+    {
+      "Id": 0,
+      "Subject": "자료구조",
+      "Unit": "이진 탐색 트리 (BST)",
+      "StudyDate": "2026-05-20T00:00:00",
+      "Memo": "삽입/삭제 시간복잡도 O(log n) 이해. 균형 깨질 때 대안 = AVL, Red-Black 트리",
+      "RepetitionCount": 3,
+      "EaseFactor": 2.6,
+      "IntervalDays": 15,
+      "NextReviewDate": "2026-06-04T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "자료구조",
+      "Unit": "그래프 — DFS/BFS",
+      "StudyDate": "2026-05-22T00:00:00",
+      "Memo": "DFS=스택 또는 재귀, BFS=큐. 그래프 표현: 인접 리스트 vs 인접 행렬",
+      "RepetitionCount": 2,
+      "EaseFactor": 2.36,
+      "IntervalDays": 6,
+      "NextReviewDate": "2026-05-29T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "자료구조",
+      "Unit": "힙과 우선순위 큐",
+      "StudyDate": "2026-05-25T00:00:00",
+      "Memo": "최대힙 / 최소힙. heapify O(n), insert/delete O(log n)",
+      "RepetitionCount": 1,
+      "EaseFactor": 2.5,
+      "IntervalDays": 1,
+      "NextReviewDate": "2026-05-28T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "운영체제",
+      "Unit": "프로세스와 스레드 차이",
+      "StudyDate": "2026-05-18T00:00:00",
+      "Memo": "프로세스 = 독립 메모리 공간, 스레드 = 메모리 공유. Context switching 비용 차이",
+      "RepetitionCount": 4,
+      "EaseFactor": 2.7,
+      "IntervalDays": 30,
+      "NextReviewDate": "2026-06-15T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "운영체제",
+      "Unit": "스케줄링 알고리즘",
+      "StudyDate": "2026-05-21T00:00:00",
+      "Memo": "FCFS, SJF, RR, MLFQ. SJF는 starvation 가능. RR의 time quantum 적정값 = ~100ms",
+      "RepetitionCount": 2,
+      "EaseFactor": 1.96,
+      "IntervalDays": 6,
+      "NextReviewDate": "2026-05-28T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "운영체제",
+      "Unit": "데드락 (Deadlock)",
+      "StudyDate": "2026-05-24T00:00:00",
+      "Memo": "발생 조건 4: 상호배제, 점유와대기, 비선점, 순환대기. Banker's Algorithm으로 예방",
+      "RepetitionCount": 1,
+      "EaseFactor": 1.7,
+      "IntervalDays": 1,
+      "NextReviewDate": "2026-05-27T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "C# 프로그래밍",
+      "Unit": "Ch.8 인터페이스",
+      "StudyDate": "2026-05-15T00:00:00",
+      "Memo": "interface 키워드, 다중 상속 가능, 명시적 구현. IDisposable의 의미",
+      "RepetitionCount": 4,
+      "EaseFactor": 2.8,
+      "IntervalDays": 30,
+      "NextReviewDate": "2026-06-14T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "C# 프로그래밍",
+      "Unit": "Ch.9 예외처리",
+      "StudyDate": "2026-05-18T00:00:00",
+      "Memo": "try-catch-finally, throw new ...Exception(), 다중 catch 순서: 구체적 → 일반적",
+      "RepetitionCount": 3,
+      "EaseFactor": 2.6,
+      "IntervalDays": 15,
+      "NextReviewDate": "2026-06-02T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "C# 프로그래밍",
+      "Unit": "Ch.10 프로퍼티 & 인덱서",
+      "StudyDate": "2026-05-23T00:00:00",
+      "Memo": "get/set, value 키워드, 백킹필드, 자동 프로퍼티, 인덱서 오버로딩",
+      "RepetitionCount": 2,
+      "EaseFactor": 2.5,
+      "IntervalDays": 6,
+      "NextReviewDate": "2026-05-30T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "데이터베이스",
+      "Unit": "정규화 (1NF~3NF, BCNF)",
+      "StudyDate": "2026-05-19T00:00:00",
+      "Memo": "1NF=원자값, 2NF=부분함수 종속 제거, 3NF=이행종속 제거. BCNF=결정자가 후보키",
+      "RepetitionCount": 2,
+      "EaseFactor": 2.36,
+      "IntervalDays": 6,
+      "NextReviewDate": "2026-05-28T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "데이터베이스",
+      "Unit": "인덱스 (B-Tree, Hash)",
+      "StudyDate": "2026-05-24T00:00:00",
+      "Memo": "B-Tree는 범위 검색에 유리, Hash는 = 비교만 가능. 클러스터드 vs 비클러스터드",
+      "RepetitionCount": 1,
+      "EaseFactor": 2.5,
+      "IntervalDays": 1,
+      "NextReviewDate": "2026-05-27T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "알고리즘",
+      "Unit": "동적 계획법 (DP) 기초",
+      "StudyDate": "2026-05-26T00:00:00",
+      "Memo": "Top-down(메모이제이션) vs Bottom-up(타뷸레이션). 피보나치, LCS, knapsack",
+      "RepetitionCount": 0,
+      "EaseFactor": 2.5,
+      "IntervalDays": 0,
+      "NextReviewDate": "2026-05-26T00:00:00"
+    }
+  ],
+  "Exams": [
+    {
+      "Id": 0,
+      "Subject": "자료구조",
+      "Name": "기말고사",
+      "ExamDate": "2026-06-10T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "운영체제",
+      "Name": "기말고사",
+      "ExamDate": "2026-06-12T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "C# 프로그래밍",
+      "Name": "기말 대체 과제 제출",
+      "ExamDate": "2026-06-05T00:00:00"
+    },
+    {
+      "Id": 0,
+      "Subject": "데이터베이스",
+      "Name": "기말고사",
+      "ExamDate": "2026-06-15T00:00:00"
+    }
+  ]
+}
