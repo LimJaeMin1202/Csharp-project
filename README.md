@@ -164,6 +164,8 @@ StudyPlanner/
 - 📋 **수행 계획서**: [`docs/REPORT_UPDATED.md`](docs/REPORT_UPDATED.md)
 - 📒 **요구사항 정리**: [`docs/NOTION_REQUIREMENTS.md`](docs/NOTION_REQUIREMENTS.md)
 - 🎬 **발표 슬라이드 구성**: [`docs/PRESENTATION_OUTLINE.md`](docs/PRESENTATION_OUTLINE.md)
+- 🎨 **PPT 제작 가이드**: [`docs/PPT_DESIGN_GUIDE.md`](docs/PPT_DESIGN_GUIDE.md)
+- 🎤 **발표 대본**: [`docs/SPEECH_SCRIPT.md`](docs/SPEECH_SCRIPT.md)
 - 💾 **시연용 데이터**: [`docs/demo_backup.json`](docs/demo_backup.json)
 
 ## 🖼️ 스크린샷
