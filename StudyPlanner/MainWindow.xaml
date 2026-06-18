@@ -428,32 +428,27 @@
                         <TextBlock Text="이번 복습, 얼마나 기억났나요?"
                                    Margin="0,0,0,10" FontWeight="Bold"/>
 
-                        <Button Content="5 — 완벽하게 기억남" Tag="5" Click="btnRate_Click"
+                        <Button Content="5 — 완벽하게 기억" Tag="5" Click="btnRate_Click"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Foreground="#2E7D32" BorderBrush="#2E7D32"
                                 Margin="0,0,0,6" Height="36"
                                 HorizontalContentAlignment="Left" Padding="14,0"/>
-                        <Button Content="4 — 약간 머뭇거림" Tag="4" Click="btnRate_Click"
+                        <Button Content="4 — 약간 기억" Tag="4" Click="btnRate_Click"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Foreground="#43A047" BorderBrush="#43A047"
                                 Margin="0,0,0,6" Height="36"
                                 HorizontalContentAlignment="Left" Padding="14,0"/>
-                        <Button Content="3 — 어렵게 기억함" Tag="3" Click="btnRate_Click"
+                        <Button Content="3 — 어렵게 기억" Tag="3" Click="btnRate_Click"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Foreground="#EF6C00" BorderBrush="#EF6C00"
                                 Margin="0,0,0,6" Height="36"
                                 HorizontalContentAlignment="Left" Padding="14,0"/>
-                        <Button Content="2 — 가물가물 (실패)" Tag="2" Click="btnRate_Click"
+                        <Button Content="2 — 거의 못함" Tag="2" Click="btnRate_Click"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Foreground="#E53935" BorderBrush="#E53935"
                                 Margin="0,0,0,6" Height="36"
                                 HorizontalContentAlignment="Left" Padding="14,0"/>
-                        <Button Content="1 — 거의 못함 (실패)" Tag="1" Click="btnRate_Click"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Foreground="#C62828" BorderBrush="#C62828"
-                                Margin="0,0,0,6" Height="36"
-                                HorizontalContentAlignment="Left" Padding="14,0"/>
-                        <Button Content="0 — 전혀 모름 (실패)" Tag="0" Click="btnRate_Click"
+                        <Button Content="1 — 전혀 모름" Tag="1" Click="btnRate_Click"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Foreground="#B71C1C" BorderBrush="#B71C1C"
                                 Margin="0,0,0,6" Height="36"
@@ -941,7 +936,7 @@
                     <materialDesign:Card Grid.Column="3" Background="#EF5350" UniformCornerRadius="8"
                                          Padding="18" Margin="6,0,0,0">
                         <StackPanel>
-                            <TextBlock Text="약점 주제 (EF&lt;2.0)" Foreground="White" FontSize="13" Opacity="0.85"/>
+                            <TextBlock Text="집중 복습 필요 주제" Foreground="White" FontSize="13" Opacity="0.85"/>
                             <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                 <TextBlock x:Name="txtStatWeak" Text="0" Foreground="White"
                                            FontSize="34" FontWeight="Bold"/>
@@ -1025,7 +1020,7 @@
                                     </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="과목" Binding="{Binding Subject}" Width="100"/>
                                     <DataGridTextColumn Header="단원/주제" Binding="{Binding Unit}" Width="*"/>
-                                    <DataGridTextColumn Header="EF"
+                                    <DataGridTextColumn Header="난이도"
                                                         Binding="{Binding EaseFactor, StringFormat=F2}" Width="60"/>
                                     <DataGridTextColumn Header="복습"
                                                         Binding="{Binding RepetitionCount}" Width="50"/>

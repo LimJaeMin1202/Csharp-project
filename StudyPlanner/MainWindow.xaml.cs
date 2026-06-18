@@ -331,7 +331,7 @@ namespace StudyPlanner
             {
                 selectedTopicId = t.Id;
                 txtSelected.Text = $"[{t.Subject}] {t.Unit}\n" +
-                                   $"현재 반복 {t.RepetitionCount}회 · 난이도(EF) {t.EaseFactor:F2}";
+                                   $"현재 반복 {t.RepetitionCount}회 · 학습 난이도 {t.EaseFactor:F2}";
             }
             else
             {
@@ -350,8 +350,19 @@ namespace StudyPlanner
                 return;
             }
 
-            // 버튼의 Tag에 담긴 점수(0~5) 읽기
-            int quality = int.Parse(((Button)sender).Tag.ToString()!);
+            // 버튼의 Tag에 담긴 점수(1~5) 읽기
+            int inputQuality = int.Parse(((Button)sender).Tag.ToString()!);
+            
+            // SM-2 알고리즘 매핑: 1~5 -> 0, 1, 3, 4, 5 로 변환
+            int quality = inputQuality switch
+            {
+                5 => 5,
+                4 => 4,
+                3 => 3,
+                2 => 1,
+                1 => 0,
+                _ => 0
+            };
 
             using (var db = new StudyDbContext())
             {
@@ -365,7 +376,7 @@ namespace StudyPlanner
 
                 MessageBox.Show(
                     $"복습 완료!\n\n다음 복습일: {topic.NextReviewDate:yyyy-MM-dd}\n" +
-                    $"복습 간격: {topic.IntervalDays}일\n난이도(EF): {topic.EaseFactor:F2}",
+                    $"복습 간격: {topic.IntervalDays}일\n학습 난이도: {topic.EaseFactor:F2}",
                     "SM-2 결과", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
