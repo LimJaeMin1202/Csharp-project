@@ -522,25 +522,8 @@ namespace StudyPlanner
                     return;
                 }
 
-                int daysUntil = (exam.ExamDate.Date - DateTime.Today).Days;
-
-                if (daysUntil <= 1)
-                {
-                    // 시험이 오늘/내일/지났으면 → 전부 지금 복습
-                    foreach (var t in topics)
-                        t.NextReviewDate = DateTime.Today;
-                }
-                else
-                {
-                    // 시험일에서 역산: 마지막 주제는 시험 하루 전, 그 앞은 이틀 전... 순으로 분산
-                    // (남은 기간을 넘어가면 순환하여 같은 구간에 배치)
-                    int window = daysUntil - 1;  // 오늘 다음날 ~ 시험 전날
-                    for (int i = 0; i < topics.Count; i++)
-                    {
-                        int daysBeforeExam = (i % window) + 1;            // 1 ~ window
-                        topics[i].NextReviewDate = exam.ExamDate.Date.AddDays(-daysBeforeExam);
-                    }
-                }
+                // ★ 격리된 순수 스케줄러 서비스를 통해 복습 예정일 분산 계산 진행
+                ExamSchedulerService.DistributeReviewDates(topics, exam);
 
                 db.SaveChanges();
             }
@@ -881,8 +864,12 @@ namespace StudyPlanner
                 LoadStatistics();
 
                 string mode = replaceExisting ? "교체" : "추가";
+                string safetyMsg = replaceExisting 
+                    ? "\n\n(안전 조치: 기존 DB는 실행 폴더의 Backups 폴더에 자동 백업되었습니다.)" 
+                    : "";
+
                 MessageBox.Show(
-                    $"가져오기 완료! ({mode})\n\n학습 주제 {topicCount}건, 시험 {examCount}건이 반영되었습니다.",
+                    $"가져오기 완료! ({mode})\n\n학습 주제 {topicCount}건, 시험 {examCount}건이 반영되었습니다.{safetyMsg}",
                     "가져오기 성공", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)

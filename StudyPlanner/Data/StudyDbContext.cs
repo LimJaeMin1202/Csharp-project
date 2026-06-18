@@ -17,9 +17,9 @@ namespace StudyPlanner.Data
         // DB 연결 방법 설정
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // studyplanner.db 라는 로컬 SQLite 파일을 사용
-            // (파일이 없으면 EnsureCreated() 호출 시 자동 생성됨)
-            optionsBuilder.UseSqlite("Data Source=studyplanner.db");
+            // 실행 파일 기준(BaseDirectory) 절대 경로를 사용해 작업 디렉터리에 관계없이 일관된 파일 보장
+            string dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "studyplanner.db");
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
     }
 }

@@ -44,11 +44,17 @@ namespace StudyPlanner.Services
         }
 
         // JSON 파일을 읽어 DB에 추가
-        // - replaceExisting=true : 기존 데이터 모두 삭제 후 가져오기
+        // - replaceExisting=true : 기존 데이터 모두 삭제 후 가져오기 (이때 자동 롤백 백업 생성)
         // - replaceExisting=false: 기존 유지 + 추가
         // 반환: (추가된 학습주제 건수, 추가된 시험 건수)
         public static (int topicCount, int examCount) ImportFromFile(string filePath, bool replaceExisting)
         {
+            // ── 데이터 교체 전, 현재 DB 파일 자동 안전 백업 (FIFO 5개 유지) ──
+            if (replaceExisting)
+            {
+                CreateAutoRollbackBackup();
+            }
+
             var json = File.ReadAllText(filePath);
             var data = JsonSerializer.Deserialize<BackupData>(json, JsonOptions);
             if (data == null)
@@ -72,6 +78,47 @@ namespace StudyPlanner.Services
                 db.SaveChanges();
             }
             return (data.Topics.Count, data.Exams.Count);
+        }
+
+        // 현재 SQLite DB 파일을 별도 폴더에 백업하고 5개만 유지한다.
+        private static void CreateAutoRollbackBackup()
+        {
+            try
+            {
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string dbPath = Path.Combine(baseDir, "studyplanner.db");
+                
+                if (!File.Exists(dbPath)) return;
+
+                string backupDir = Path.Combine(baseDir, "Backups");
+                if (!Directory.Exists(backupDir))
+                {
+                    Directory.CreateDirectory(backupDir);
+                }
+
+                // 타임스탬프 기반 파일명 생성
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string backupPath = Path.Combine(backupDir, $"studyplanner_auto_{timestamp}.db.bak");
+
+                // 파일 복사
+                File.Copy(dbPath, backupPath, true);
+
+                // ── 5개 초과 시 오래된 파일 삭제 (FIFO) ──
+                var backupFiles = new DirectoryInfo(backupDir)
+                                    .GetFiles("studyplanner_auto_*.db.bak")
+                                    .OrderBy(f => f.CreationTime)
+                                    .ToList();
+
+                while (backupFiles.Count > 5)
+                {
+                    backupFiles[0].Delete();
+                    backupFiles.RemoveAt(0);
+                }
+            }
+            catch
+            {
+                // 백업 실패가 메인 흐름(임포트)을 막지는 않도록 예외 무시
+            }
         }
     }
 }
