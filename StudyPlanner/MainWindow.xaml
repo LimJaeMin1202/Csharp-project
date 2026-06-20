@@ -18,6 +18,11 @@
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
+        <!-- 전역 텍스트 블록 스타일: 다크모드 대응 -->
+        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+        </Style>
+
         <!-- 클릭 가능한 카드: 마우스 호버 시 그림자 ↑ + 손가락 커서 + 살짝 떠오름 -->
         <Style x:Key="HoverCardStyle" TargetType="materialDesign:Card"
                BasedOn="{StaticResource {x:Type materialDesign:Card}}">
@@ -190,7 +195,7 @@
                                        FontSize="15" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="등록한 학습 주제를 과목별로 묶어서 보여줍니다."
-                                       FontSize="11" Foreground="#666" Margin="0,0,0,8"
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"
                                        TextWrapping="Wrap"/>
                             <lvc:CartesianChart x:Name="chartSubject"/>
                         </DockPanel>
@@ -202,7 +207,7 @@
                                        FontSize="15" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="다음 2주간 매일 몇 개의 주제를 복습해야 하는지 보여줍니다. SM-2 알고리즘이 자동으로 분산해 배치합니다."
-                                       FontSize="11" Foreground="#666" Margin="0,0,0,8"
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"
                                        TextWrapping="Wrap"/>
                             <lvc:CartesianChart x:Name="chartSchedule"/>
                         </DockPanel>
@@ -268,7 +273,7 @@
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
                         <TextBlock Text="등록된 학습 주제" FontSize="18" FontWeight="Bold"/>
                         <TextBlock Text="행 더블클릭 = 편집  ·  휴지통 = 삭제"
-                                   FontSize="11" Foreground="#888"
+                                   FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                    HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                     </Grid>
 
@@ -299,7 +304,7 @@
                         </Button>
                         <TextBlock x:Name="txtFilterResultCount" Grid.Column="3"
                                    VerticalAlignment="Center" Margin="6,0,0,0"
-                                   FontSize="12" Foreground="#666"/>
+                                   FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                     </Grid>
 
                     <Grid>
@@ -348,10 +353,10 @@
                                     Visibility="Collapsed" IsHitTestVisible="False">
                             <materialDesign:PackIcon Kind="BookOpenPageVariantOutline" Width="64" Height="64"
                                                      Foreground="#BDBDBD" HorizontalAlignment="Center"/>
-                            <TextBlock Text="등록된 학습 주제가 없습니다" Foreground="#888"
+                            <TextBlock Text="등록된 학습 주제가 없습니다" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                        FontSize="15" Margin="0,12,0,4" HorizontalAlignment="Center"/>
                             <TextBlock Text="좌측 폼에서 첫 주제를 추가해보세요  (Ctrl+N)"
-                                       Foreground="#AAA" FontSize="12" HorizontalAlignment="Center"/>
+                                       Foreground="{DynamicResource MaterialDesignBodyLight}" Opacity="0.6" FontSize="12" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </DockPanel>
@@ -411,10 +416,10 @@
                                     Visibility="Collapsed" IsHitTestVisible="False">
                             <materialDesign:PackIcon Kind="CheckCircleOutline" Width="64" Height="64"
                                                      Foreground="#A5D6A7" HorizontalAlignment="Center"/>
-                            <TextBlock Text="오늘 복습할 항목이 없습니다 ✨" Foreground="#888"
+                            <TextBlock Text="오늘 복습할 항목이 없습니다 ✨" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                        FontSize="15" Margin="0,12,0,4" HorizontalAlignment="Center"/>
                             <TextBlock Text="새 학습 주제를 등록하거나 잠시 쉬어가세요"
-                                       Foreground="#AAA" FontSize="12" HorizontalAlignment="Center"/>
+                                       Foreground="{DynamicResource MaterialDesignBodyLight}" Opacity="0.6" FontSize="12" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </DockPanel>
@@ -424,7 +429,7 @@
                     <StackPanel>
                         <TextBlock Text="자가 평가" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
                         <TextBlock x:Name="txtSelected" Text="복습할 항목을 선택하세요."
-                                   TextWrapping="Wrap" Margin="0,0,0,16" Foreground="#666"/>
+                                   TextWrapping="Wrap" Margin="0,0,0,16" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                         <TextBlock Text="이번 복습, 얼마나 기억났나요?"
                                    Margin="0,0,0,10" FontWeight="Bold"/>
 
@@ -503,7 +508,7 @@
 
                         <Separator Margin="0,0,0,12"/>
                         <TextBlock Text="목록에서 시험을 선택한 뒤 누르면, 해당 과목 학습 주제들의 복습 일정을 시험일 기준으로 재배치합니다."
-                                   TextWrapping="Wrap" Foreground="#666" FontSize="12" Margin="0,0,0,10"/>
+                                   TextWrapping="Wrap" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12" Margin="0,0,0,10"/>
 
                         <Button x:Name="btnGenPlan" Click="btnGenPlan_Click"
                                 Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
@@ -521,7 +526,7 @@
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
                         <TextBlock Text="등록된 시험" FontSize="18" FontWeight="Bold"/>
                         <TextBlock Text="행 더블클릭 = 편집  ·  휴지통 = 삭제"
-                                   FontSize="11" Foreground="#888"
+                                   FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                    HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                     </Grid>
 
@@ -552,7 +557,7 @@
                         </Button>
                         <TextBlock x:Name="txtExamFilterResultCount" Grid.Column="3"
                                    VerticalAlignment="Center" Margin="6,0,0,0"
-                                   FontSize="12" Foreground="#666"/>
+                                   FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                     </Grid>
 
                     <Grid>
@@ -597,10 +602,10 @@
                                     Visibility="Collapsed" IsHitTestVisible="False">
                             <materialDesign:PackIcon Kind="CalendarBlankOutline" Width="64" Height="64"
                                                      Foreground="#BDBDBD" HorizontalAlignment="Center"/>
-                            <TextBlock Text="등록된 시험이 없습니다" Foreground="#888"
+                            <TextBlock Text="등록된 시험이 없습니다" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                        FontSize="15" Margin="0,12,0,4" HorizontalAlignment="Center"/>
                             <TextBlock Text="좌측 폼에서 시험 일정을 추가해보세요  (Ctrl+E)"
-                                       Foreground="#AAA" FontSize="12" HorizontalAlignment="Center"/>
+                                       Foreground="{DynamicResource MaterialDesignBodyLight}" Opacity="0.6" FontSize="12" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </DockPanel>
@@ -640,7 +645,7 @@
                         </Grid>
 
                         <TextBlock x:Name="txtPomodoroStatus" Text="시작 버튼을 눌러 집중을 시작하세요"
-                                   FontSize="13" Foreground="#888"
+                                   FontSize="13" Foreground="{DynamicResource MaterialDesignBodyLight}"
                                    HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
                         <!-- 모드 선택 -->
@@ -696,7 +701,7 @@
                 <materialDesign:Card Grid.Column="1" UniformCornerRadius="12" Padding="20">
                     <StackPanel>
                         <TextBlock Text="포모도로 기법" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
-                        <TextBlock TextWrapping="Wrap" Foreground="#666" FontSize="12" Margin="0,0,0,20">
+                        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12" Margin="0,0,0,20">
                             <Run Text="25분 집중 → 5분 휴식 사이클을 반복하는 시간 관리법입니다."/>
                             <LineBreak/>
                             <Run Text="4회 사이클마다 긴 휴식(15분)을 권장합니다."/>
@@ -707,9 +712,9 @@
                         <TextBlock Text="📊 오늘 집중" FontWeight="Bold" Margin="0,0,0,6"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                             <TextBlock x:Name="txtTodaySessions" Text="0" FontSize="28" FontWeight="Bold" Foreground="#5C6BC0"/>
-                            <TextBlock Text="회" Foreground="#888" VerticalAlignment="Bottom" Margin="3,0,12,5"/>
+                            <TextBlock Text="회" Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Bottom" Margin="3,0,12,5"/>
                             <TextBlock x:Name="txtTodayMinutes" Text="0" FontSize="28" FontWeight="Bold" Foreground="#5C6BC0"/>
-                            <TextBlock Text="분" Foreground="#888" VerticalAlignment="Bottom" Margin="3,0,0,5"/>
+                            <TextBlock Text="분" Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Bottom" Margin="3,0,0,5"/>
                         </StackPanel>
 
                         <Separator Margin="0,16,0,16"/>
@@ -717,15 +722,15 @@
                         <TextBlock Text="📈 이번 주 (월~)" FontWeight="Bold" Margin="0,0,0,6"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                             <TextBlock x:Name="txtWeekSessions" Text="0" FontSize="28" FontWeight="Bold" Foreground="#26A69A"/>
-                            <TextBlock Text="회" Foreground="#888" VerticalAlignment="Bottom" Margin="3,0,12,5"/>
+                            <TextBlock Text="회" Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Bottom" Margin="3,0,12,5"/>
                             <TextBlock x:Name="txtWeekMinutes" Text="0" FontSize="28" FontWeight="Bold" Foreground="#26A69A"/>
-                            <TextBlock Text="분" Foreground="#888" VerticalAlignment="Bottom" Margin="3,0,0,5"/>
+                            <TextBlock Text="분" Foreground="{DynamicResource MaterialDesignBodyLight}" VerticalAlignment="Bottom" Margin="3,0,0,5"/>
                         </StackPanel>
 
                         <Separator Margin="0,16,0,16"/>
 
                         <TextBlock Text="💡 팁" FontWeight="Bold" Margin="0,0,0,6"/>
-                        <TextBlock TextWrapping="Wrap" Foreground="#888" FontSize="12">
+                        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource MaterialDesignBodyLight}" FontSize="12">
                             집중 세션 완료 시 자동으로 기록됩니다. 트레이 알림과 시스템 소리로 알려줍니다.
                         </TextBlock>
                     </StackPanel>
@@ -779,11 +784,11 @@
 
                 <!-- 요일 헤더 -->
                 <UniformGrid Grid.Row="1" Columns="7" Margin="0,0,0,4">
-                    <TextBlock Text="월" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#666"/>
-                    <TextBlock Text="화" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#666"/>
-                    <TextBlock Text="수" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#666"/>
-                    <TextBlock Text="목" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#666"/>
-                    <TextBlock Text="금" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#666"/>
+                    <TextBlock Text="월" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                    <TextBlock Text="화" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                    <TextBlock Text="수" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                    <TextBlock Text="목" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                    <TextBlock Text="금" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                     <TextBlock Text="토" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#2196F3"/>
                     <TextBlock Text="일" HorizontalAlignment="Center" FontWeight="Bold" Foreground="#E53935"/>
                 </UniformGrid>
@@ -831,13 +836,14 @@
                                                FontWeight="Bold" FontSize="14">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#333"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsWeekend}" Value="True">
                                                         <Setter Property="Foreground" Value="#E53935"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
-                                                        <Setter Property="Foreground" Value="#BBB"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+                                                        <Setter Property="Opacity" Value="0.4"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -960,7 +966,7 @@
                                        FontSize="14" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="달마다 새로 등록한 학습 주제 수입니다."
-                                       FontSize="11" Foreground="#888" Margin="0,0,0,8"/>
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"/>
                             <lvc:CartesianChart x:Name="chartMonthly"/>
                         </DockPanel>
                     </materialDesign:Card>
@@ -971,7 +977,7 @@
                                        FontSize="14" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="어느 요일에 가장 많이 공부했는지 보여줍니다."
-                                       FontSize="11" Foreground="#888" Margin="0,0,0,8"/>
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"/>
                             <lvc:CartesianChart x:Name="chartDayOfWeek"/>
                         </DockPanel>
                     </materialDesign:Card>
@@ -990,7 +996,7 @@
                                        FontSize="14" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="SM-2 알고리즘으로 각 주제를 몇 번 복습했는지 분포입니다."
-                                       FontSize="11" Foreground="#888" Margin="0,0,0,8"
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"
                                        TextWrapping="Wrap"/>
                             <lvc:CartesianChart x:Name="chartProgress"/>
                         </DockPanel>
@@ -1002,7 +1008,7 @@
                                        FontSize="14" FontWeight="Bold" Margin="0,0,0,2"/>
                             <TextBlock DockPanel.Dock="Top"
                                        Text="난이도 계수(EF)가 가장 낮은 단원들입니다. 우선적으로 복습하세요."
-                                       FontSize="11" Foreground="#888" Margin="0,0,0,8"
+                                       FontSize="11" Foreground="{DynamicResource MaterialDesignBodyLight}" Margin="0,0,0,8"
                                        TextWrapping="Wrap"/>
                             <DataGrid x:Name="dgWeakTopics"
                                       Style="{StaticResource MaterialDesignDataGrid}"

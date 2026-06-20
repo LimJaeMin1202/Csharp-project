@@ -19,7 +19,7 @@
             <!-- 자동 알림 섹션 -->
             <TextBlock Text="매일 자동 알림" FontWeight="Bold" Margin="0,0,0,8"/>
             <TextBlock Text="정해진 시간에 '오늘 복습할 항목 N건' 트레이 알림을 받습니다."
-                       FontSize="12" Foreground="#888" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                       FontSize="12" Foreground="{DynamicResource MaterialDesignBodyLight}" TextWrapping="Wrap" Margin="0,0,0,12"/>
 
             <CheckBox x:Name="chkNotifyEnabled"
                       Style="{StaticResource MaterialDesignCheckBox}"

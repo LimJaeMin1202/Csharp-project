@@ -31,7 +31,7 @@ namespace StudyPlanner
     public partial class MainWindow : Window
     {
         // 자가 평가 대상으로 선택된 학습 주제의 Id
-        private int? selectedTopicId = null;
+        private int? selectedTopicId;
 
         // 트레이 아이콘 & 알림 서비스
         private TrayNotificationService? trayService;
@@ -606,14 +606,17 @@ namespace StudyPlanner
                         Fill = new SolidColorPaint(SubjectColorService.GetSkColor(grp.Subject))
                     });
                 }
-                chartSubject.Series = subjectSeries.ToArray();
+                // 다크모드 여부에 따라 색상 결정 (다크: 흰색, 라이트: 어두운 회색)
+                bool isDark = SettingsService.Load().DarkMode;
+                var labelPaint = new SolidColorPaint(isDark ? SKColors.White : new SKColor(50, 50, 50));
 
                 chartSubject.XAxes = new[]
                 {
                     new Axis
                     {
                         Labels = bySubject.Select(x => x.Subject).ToArray(),
-                        LabelsRotation = 0
+                        LabelsRotation = 0,
+                        LabelsPaint = labelPaint
                     }
                 };
                 chartSubject.YAxes = new[]
@@ -622,9 +625,12 @@ namespace StudyPlanner
                     {
                         MinLimit = 0,
                         MinStep = 1,
-                        Labeler = v => $"{v:F0}개"
+                        Labeler = v => $"{v:F0}개",
+                        LabelsPaint = labelPaint
                     }
                 };
+
+                // (이하 중략: chartSchedule, chartMonthly, chartDayOfWeek, chartProgress 모두 동일 적용)
 
                 // ── 차트 2: 향후 14일 복습 일정 ──
                 // 본인 데이터 기반: NextReviewDate가 앞으로 N일 안에 있는 주제를 일별로 카운트
@@ -659,12 +665,14 @@ namespace StudyPlanner
                         Fill = new SolidColorPaint(new SKColor(76, 175, 80))  // 초록 (복습 = 학습 활동)
                     }
                 };
+
                 chartSchedule.XAxes = new[]
                 {
                     new Axis
                     {
                         Labels = dayLabels,
-                        LabelsRotation = 0
+                        LabelsRotation = 0,
+                        LabelsPaint = labelPaint
                     }
                 };
                 chartSchedule.YAxes = new[]
@@ -673,7 +681,8 @@ namespace StudyPlanner
                     {
                         MinLimit = 0,
                         MinStep = 1,
-                        Labeler = v => $"{v:F0}개"   // 'N개' 형태로 표시 (가로로 자연스럽게 읽힘)
+                        Labeler = v => $"{v:F0}건",
+                        LabelsPaint = labelPaint
                     }
                 };
             }
@@ -815,7 +824,7 @@ namespace StudyPlanner
 
         // ===================== 다크모드 토글 =====================
 
-        // [테마 전환] 버튼 클릭 → 라이트↔다크 토글 + 저장
+        // [테마 전환] 버튼 클릭 → 라이트↔다크 토글 + 저장 + 차트 갱신
         private void btnTheme_Click(object sender, RoutedEventArgs e)
         {
             var settings = SettingsService.Load();
@@ -823,6 +832,10 @@ namespace StudyPlanner
             ThemeService.ApplyTheme(settings.DarkMode);
             SettingsService.Save();
             UpdateThemeIcon(settings.DarkMode);
+            
+            // 차트 갱신 (테마 변경 시 라벨 색상 즉시 반영)
+            LoadDashboard();
+            LoadStatistics();
         }
 
         // 현재 테마에 맞춰 토글 아이콘 변경
@@ -931,13 +944,17 @@ namespace StudyPlanner
                         GeometryFill = new SolidColorPaint(SKColors.White)
                     }
                 };
+                // 다크모드에 따른 차트 텍스트 색상 결정
+                bool isDark = SettingsService.Load().DarkMode;
+                var labelPaint = new SolidColorPaint(isDark ? SKColors.White : new SKColor(33, 33, 33));
+
                 chartMonthly.XAxes = new[]
                 {
-                    new Axis { Labels = monthLabels, LabelsRotation = 0 }
+                    new Axis { Labels = monthLabels, LabelsRotation = 0, LabelsPaint = labelPaint }
                 };
                 chartMonthly.YAxes = new[]
                 {
-                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개" }
+                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개", LabelsPaint = labelPaint }
                 };
 
                 // ─── 차트 2: 요일별 학습 분포 ───
@@ -962,11 +979,11 @@ namespace StudyPlanner
                 };
                 chartDayOfWeek.XAxes = new[]
                 {
-                    new Axis { Labels = dayLabels, LabelsRotation = 0 }
+                    new Axis { Labels = dayLabels, LabelsRotation = 0, LabelsPaint = labelPaint }
                 };
                 chartDayOfWeek.YAxes = new[]
                 {
-                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개" }
+                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개", LabelsPaint = labelPaint }
                 };
 
                 // ─── 차트 3: 복습 진행도 분포 (0회, 1회, 2회, 3회, 4회+) ───
@@ -992,11 +1009,11 @@ namespace StudyPlanner
                 };
                 chartProgress.XAxes = new[]
                 {
-                    new Axis { Labels = progressLabels, LabelsRotation = 0 }
+                    new Axis { Labels = progressLabels, LabelsRotation = 0, LabelsPaint = labelPaint }
                 };
                 chartProgress.YAxes = new[]
                 {
-                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개" }
+                    new Axis { MinLimit = 0, MinStep = 1, Labeler = v => $"{v:F0}개", LabelsPaint = labelPaint }
                 };
 
                 // ─── 약점 단원 Top 5 (한 번 이상 복습한 것 중 EF 낮은 순) ───
