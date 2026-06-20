@@ -333,15 +333,15 @@
                                                 Binding="{Binding NextReviewDate, StringFormat=yyyy/MM/dd}" Width="100"/>
                             <DataGridTextColumn Header="반복"
                                                 Binding="{Binding RepetitionCount}" Width="50"/>
-                            <DataGridTemplateColumn Header="" Width="44">
+                            <DataGridTemplateColumn Header="" Width="60">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Style="{StaticResource MaterialDesignIconButton}"
                                                 Click="btnDeleteTopic_Click"
                                                 ToolTip="삭제"
-                                                Padding="2" Width="32" Height="32"
+                                                Padding="0" Width="40" Height="40"
                                                 Foreground="#B71C1C">
-                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
+                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="22" Height="22"/>
                                         </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
